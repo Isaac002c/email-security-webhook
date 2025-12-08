@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  },
+  "name": "email-security-webhook",
+  "description": "MailShield é um sistema de auditoria de segurança para empresas, focado na detecção de e-mails fraudulentos. O projeto inclui um backend com webhook e motor de análise, além de um dashboard simples para visualização dos eventos.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "npx nodemon index "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
