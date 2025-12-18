@@ -1,13 +1,42 @@
-require("dotenv").config()
-const express = require ("express");
+require("dotenv").config();
+require("./db/connection");
 
+const express = require("express");
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 
-//importar as rotas
+require("./routes/webhook")(app);
+require("./routes/analysis")(app);
 
-require("./routes/webhook")(app)
+// no index.js, logo após app.use(express.json());
+app.get("/test-db", (req, res) => {
+  const { v4: uuidv4 } = require("uuid");
+  const emailRepo = require("./repositories/emailRepository");
 
-app.listen(process.env.PORT, () => {
-    console.log("server started at " + process.env.PORT);
+  // 1. Criar email de teste
+  const testId = uuidv4();
+  emailRepo.createEmail({ id: testId, payload: { from: "teste@teste.com", subject: "Teste DB" } });
+
+  // 2. Buscar email criado
+  let email = emailRepo.findEmailById(testId);
+
+  // 3. Atualizar análise
+  const analysis = { safe: true };
+  emailRepo.updateAnalysis(testId, analysis);
+
+  // 4. Buscar email atualizado
+  email = emailRepo.findEmailById(testId);
+
+  res.json(email);
+});
+
+
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
