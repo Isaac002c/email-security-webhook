@@ -1,0 +1,19 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Env
+.env
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Dumps / migrations temporárias
+dump.sql
+dump_pg.sql
+
+# Outros
+.DS_Store
