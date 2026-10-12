@@ -1,34 +1,54 @@
-# MailShield – Email Security Webhook
+# MailShield — Webhook de Segurança de E-mails
 
-MailShield é um sistema de auditoria de segurança para empresas, focado na detecção de e-mails fraudulentos.
-O projeto inclui um backend com webhook e motor de análise, além de um dashboard simples para visualização dos eventos.
+Protótipo para explorar o recebimento de eventos de e-mail, sua persistência e a aplicação de regras heurísticas. O repositório contém serviços em Python e Node.js em estágios diferentes de implementação.
 
-Estrutura do Projeto
-mailshield/
-├─ backend/        # Fastify API + análise
-├─ frontend/       # Dashboard (React/Next)
-├─ infra/          # docker-compose e scripts
-├─ docs/           # regras de análise
-└─ .github/        # CI pipeline
+> **Estado atual:** projeto experimental. A rota de análise da API FastAPI está desativada, e as regras heurísticas em Python ainda não estão conectadas ao fluxo da API. O projeto não deve ser tratado como um serviço completo de proteção contra phishing.
 
-Funcionalidades
+## Componentes
 
-Recebimento de eventos via /webhook
+| Caminho | Responsabilidade |
+| --- | --- |
+| <code>app/</code> | API FastAPI de referência, com rotas de saúde, recebimento, validação e informações do serviço |
+| <code>app/rules.py</code> | Heurísticas simples baseadas no assunto, remetente e conteúdo da mensagem |
+| <code>main/backend/src/</code> | API Node.js que recebe eventos, persiste payloads em SQLite e consulta o estado de uma análise |
+| <code>main/security/</code> | Amostras de mensagens e arquivos de regras em desenvolvimento |
 
-Análise de e-mails (headers, SPF, DKIM, DMARC, links suspeitos)
+## API FastAPI
 
-Registro de logs e incidentes
+A aplicação em <code>app/main.py</code> expõe:
 
-Dashboard simples para visualização
+| Método | Rota | Comportamento atual |
+| --- | --- | --- |
+| <code>GET</code> | <code>/health</code> | Retorna o estado da API |
+| <code>POST</code> | <code>/webhook</code> | Recebe um payload JSON e retorna as chaves recebidas |
+| <code>POST</code> | <code>/validate</code> | Valida o formato básico e retorna uma prévia do payload |
+| <code>POST</code> | <code>/analyze</code> | Placeholder; a análise está desativada |
+| <code>GET</code> | <code>/info</code> | Informa a versão e se as regras estão carregadas |
 
-Deploy via Docker Compose
+Para executar essa API localmente:
 
-CI com GitHub Actions
+~~~powershell
+python -m venv .venv
+./.venv/Scripts/Activate.ps1
+python -m pip install fastapi uvicorn
+python -m uvicorn app.main:app --reload
+~~~
 
-Tecnologias
+O servidor local padrão do Uvicorn fica em http://localhost:8000.
 
-Backend: Node.js, Fastify
+## Serviço Node.js
 
-Frontend: React/Next.js
+A implementação em <code>main/backend/src/</code> oferece <code>POST /webhook</code> para registrar mensagens e <code>GET /analysis/:emailId</code> para consultar o status armazenado. A persistência usa SQLite local.
 
-Infra: Docker, GitHub Actions
+Esse serviço ainda está em desenvolvimento: o código importa módulos que não estão declarados no manifesto de dependências do próprio backend. Alinhe as dependências antes de tentar executá-lo a partir de uma instalação limpa.
+
+## Regras heurísticas
+
+O módulo <code>app/rules.py</code> atribui uma pontuação simples usando termos suspeitos, formato do remetente e quantidade de links. Essas regras são demonstrativas e não substituem validação de SPF, DKIM, DMARC, reputação de domínio ou uma análise de segurança completa.
+
+## Próximos passos
+
+- Integrar o motor de regras a uma rota de análise.
+- Consolidar a implementação e as dependências do serviço.
+- Adicionar testes automatizados para ingestão, validação e análise.
+- Definir controles de autenticação, retenção e proteção de dados antes de qualquer uso real.
