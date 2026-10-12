@@ -21,7 +21,7 @@ A aplicação em <code>app/main.py</code> expõe:
 | --- | --- | --- |
 | <code>GET</code> | <code>/health</code> | Retorna o estado da API |
 | <code>POST</code> | <code>/webhook</code> | Recebe um payload JSON e retorna as chaves recebidas |
-| <code>POST</code> | <code>/validate</code> | Valida o formato básico e retorna uma prévia do payload |
+| <code>POST</code> | <code>/validate</code> | Devolve uma prévia do payload recebido, sem validar o conteúdo |
 | <code>POST</code> | <code>/analyze</code> | Placeholder; a análise está desativada |
 | <code>GET</code> | <code>/info</code> | Informa a versão e se as regras estão carregadas |
 
